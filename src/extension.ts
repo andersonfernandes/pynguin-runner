@@ -26,13 +26,13 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       // TODO: Improve:
-      // - docker: dependencies install process (file, volume ??)
-      // - docker: code folder volume
-      // - docker: output folder volume
-      // - extension: run command
+      // - extension: study addition of docker build ???
+      // - extension: add pynguin version and timeout(maximum-search-time) to the user configs
       const terminal = vscode.window.createTerminal();
       terminal.sendText(getPullImageCommand());
-      terminal.sendText(getRunPynguinCommand(fileFolder, fileName));
+      terminal.sendText(
+        getRunPynguinCommand(projectRoot, fileFolder, fileName)
+      );
 
       terminal.show(true);
     }
