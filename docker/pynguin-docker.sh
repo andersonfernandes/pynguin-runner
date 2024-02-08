@@ -2,8 +2,9 @@
 
 # This script was created using pynguin's script as reference https://github.com/se2p/pynguin/blob/0.34.0/pynguin-docker.sh
 
-CODE_DIR="/code"
-OUTPUT_DIR="${CODE_DIR}/pynguin_tests"
+MODULE_DIR="/module"
+PROJECT_DIR="/project"
+OUTPUT_DIR="${PROJECT_DIR}/pynguin_tests"
 
 function help_message {
   echo ""
@@ -12,10 +13,11 @@ function help_message {
   echo "This script can only be used inside a Docker container, it checks that certain"
   echo "mounts are set, installs possible dependencies of a project for Pynguin,"
   echo "executes Pynguin and provides the results."
-  echo "In order to use this, you have to provide the code mount point within your Docker run"
+  echo "In order to use this, you have to provide the module mount point within your Docker run"
   echo "command:"
   echo "docker run \\"
-  echo "    -v /path/to/code:${CODE_DIR} \\"
+  echo "    -v /path/to/module:${MODULE_DIR} \\"
+  echo "    -v /path/to/project:${PROJECT_DIR} \\"
   echo "    ..."
   echo ""
 }
@@ -36,21 +38,29 @@ then
   exit 1
 fi
 
-# Check if the /code mount point is present and not empty
-if [[ ! -d ${CODE_DIR} || -z "$(ls -A ${CODE_DIR})" ]]
+# Check if the /module mount point is present and not empty
+if [[ ! -d ${MODULE_DIR} || -z "$(ls -A ${MODULE_DIR})" ]]
 then
-  error_echo "You need to specify a mount to ${CODE_DIR}"
+  error_echo "You need to specify a mount to ${MODULE_DIR}"
   help_message
   exit 1
 fi
 
-cd ${CODE_DIR}
+# Check if the /project mount point is present and not empty
+if [[ ! -d ${PROJECT_DIR} || -z "$(ls -A ${PROJECT_DIR})" ]]
+then
+  error_echo "You need to specify a mount to ${PROJECT_DIR}"
+  help_message
+  exit 1
+fi
+
+cd ${MODULE_DIR}
 mkdir -p ${OUTPUT_DIR}
 
-if test -f "${CODE_DIR}/package.txt"; then
+if test -f "${PROJECT_DIR}/setup.py"; then
   # Install dependencies by installing the package
-  pip install -r "${CODE_DIR}/package.txt"
+  pip install "${PROJECT_DIR}"
 fi
 
 # Execute Pynguin with all arguments passed to this script
-pynguin -v --project-path ${CODE_DIR} --output-path ${OUTPUT_DIR} --report-dir ${CODE_DIR} "$@"
+pynguin -v --project-path ${MODULE_DIR} --output-path ${OUTPUT_DIR} --report-dir ${OUTPUT_DIR} "$@"
