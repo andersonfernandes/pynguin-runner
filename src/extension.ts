@@ -25,9 +25,6 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // TODO: Improve:
-      // - extension: study addition of docker build ???
-      // - extension: add pynguin version and timeout(maximum-search-time) to the user configs
       const terminal = vscode.window.createTerminal();
       terminal.sendText(getPullImageCommand());
       terminal.sendText(

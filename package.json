@@ -14,6 +14,21 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Pynguin",
+      "properties": {
+        "pynguin.version": {
+          "type": "string",
+          "default": "0.34.0",
+          "enum": ["0.34.0", "0.33.0"]
+        },
+        "pynguin.maximumSearchTime": {
+          "type": "string",
+          "default": "600",
+          "description": "Specifies the maximun amount of search time."
+        }
+      }
+    },
     "commands": [
       {
         "command": "pynguin-runner.generateTests",
