@@ -1,7 +1,23 @@
-import * as vscode from "vscode";
+import { exec } from "child_process";
+import { getConfig } from "./config";
 
-const getConfig = (key: string) =>
-  vscode.workspace.getConfiguration("pynguin").get(key);
+export const validateDockerInstallation = async (): Promise<boolean> => {
+  try {
+    await new Promise((resolve, reject) => {
+      exec("docker info", (error, stdout, stderr) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(stdout ? stdout : stderr);
+      });
+    });
+
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
 
 export const getPullImageCommand = () =>
   `docker pull andersonfernandes/pynguin_runner:${getConfig("version")}`;

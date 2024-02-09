@@ -1,15 +1,22 @@
 import * as vscode from "vscode";
-import { getPullImageCommand, getRunPynguinCommand } from "./utils/commands";
+import {
+  getPullImageCommand,
+  getRunPynguinCommand,
+  validateDockerInstallation as isDockerInstalled,
+} from "./utils/docker";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("pynguin-runner is active!");
 
   let disposable = vscode.commands.registerCommand(
     "pynguin-runner.generateTests",
-    (ctx) => {
-      vscode.window.showInformationMessage(
-        "Running Pynguin for the current module!"
-      );
+    async () => {
+      if (!(await isDockerInstalled())) {
+        vscode.window.showErrorMessage(
+          "You need to have docker installed in order to run Pynguin."
+        );
+        return;
+      }
 
       const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
       const projectRoot = workspaceFolders[0]?.uri?.path;
@@ -24,6 +31,10 @@ export function activate(context: vscode.ExtensionContext) {
         );
         return;
       }
+
+      vscode.window.showInformationMessage(
+        "Running Pynguin for the current module."
+      );
 
       const terminal = vscode.window.createTerminal();
       terminal.sendText(getPullImageCommand());
