@@ -1,6 +1,6 @@
 # Pynguin Runner
 
-Generate unit tests with Pynguin through Visual Studio Code interface
+Generate unit tests with [Pynguin](https://github.com/se2p/pynguin) through Visual Studio Code interface
 
 ## Requirements
 
